@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: kalym
+      POSTGRES_USER: kalym
+      POSTGRES_PASSWORD: kalym
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+  bot:
+    build: .
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      # fallback if .env not set
+      DATABASE_URL: ${DATABASE_URL:-postgres://kalym:kalym@db:5432/kalym}
+    restart: unless-stopped
+volumes:
+  pg_data:
